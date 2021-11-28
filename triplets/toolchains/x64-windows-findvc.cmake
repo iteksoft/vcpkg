@@ -102,7 +102,7 @@ endif()
 # set LibDir and IncludeDir for Windows Kits
 set(CMAKE_WINDOWS_KITS_INCLUDEDIR "${CMAKE_WINDOWS_KITS_DIR}/Include/${CMAKE_WINDOWS_KITS_VERSION}")
 set(CMAKE_WINDOWS_KITS_LIBDIR "${CMAKE_WINDOWS_KITS_DIR}/Lib/${CMAKE_WINDOWS_KITS_VERSION}")
-
+set(CMAKE_WINDOWS_KITS_BINDIR "${CMAKE_WINDOWS_KITS_DIR}/bin/${CMAKE_WINDOWS_KITS_VERSION}")
 
 #cmake_path(GET newversion PARENT_PATH newver1)
 message(STATUS "sdkversion:: " ${CMAKE_WINDOWS_KITS_VERSION} " envvar " $ENV{WindowsSDKVersion} "  new ver1:: " ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION})
@@ -175,7 +175,7 @@ if (NOT DEFINED ENV{VSINSTALLDIR})
             #set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION ${CMAKE_WINDOWS_KITS_VERSION})
             #set(ENV{WindowsSDKVersion} ${CMAKE_WINDOWS_KITS_VERSION})
 
-            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/$ENV{CMAKE_VCToolsVersion}")   
+            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/${CMAKE_VCToolsVersion}")   
         else()
             set(CMAKE_VCToolsVersion $ENV{VCToolsVersion})
             set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/$ENV{VCToolsVersion}")   
