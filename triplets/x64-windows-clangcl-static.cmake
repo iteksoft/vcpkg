@@ -14,7 +14,7 @@ if (DEFINED ENV{ProgramW6432})
 else()
     file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" PROG_ROOT)
 endif()
-if (DEFINED ENV{LLVMInstallDir})
+if (DEFINED ENV{LLVM_ROOT})
     file(TO_CMAKE_PATH "${LLVM_ROOT}/bin" POSSIBLE_LLVM_BIN_DIR)
 else()
     file(TO_CMAKE_PATH "${PROG_ROOT}/LLVM/bin" POSSIBLE_LLVM_BIN_DIR)
@@ -55,7 +55,7 @@ set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} -EHsc -GR")
 
 
 if(DEFINED VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE)
-    include("${VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE}")
+    include("${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-clang.toolchain.cmake")
 endif()
 
 message(WARNING "IN vcpkg trilet last line !!! info:: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER} ")
