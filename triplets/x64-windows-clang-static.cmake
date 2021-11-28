@@ -59,3 +59,5 @@ if(DEFINED VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE)
 endif()
 
 message(STATUS "IN vcpkg trilet last line !!! info:: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER} ")
+
+message(STATUS "more info:: comiler id ${CMAKE_CXX_COMPILER_ID} sim id  ${CMAKE_CXX_SIMULATE_ID}  frontend::${MAKE_CXX_COMPILER_FRONTEND_VARIANT} msvc::${MSVC_TOOLSET_VERSION}")

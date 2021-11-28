@@ -60,6 +60,25 @@ set(CMAKE_ASM_MASM_COMPILER "${LLVM_BIN_DIR}/llvm-ml.exe" CACHE STRING "" FORCE)
 set(CMAKE_RC_COMPILER "${LLVM_BIN_DIR}/llvm-rc.exe" CACHE STRING "" FORCE)
 set(CMAKE_MT ${CLANG-CL-MTEXE} CACHE STRING "" FORCE)
 
+
+# ######################################################################################
+# skip compiler id test
+#set(CMAKE_CXX_COMPILER_ID_RUN TRUE) # for skipping compiler id check
+
+set(CMAKE_CXX_COMPILER_ID Clang)  #for 
+
+# for clang-cl mode
+set(CMAKE_CXX_SIMULATE_ID MSVC)
+set(CMAKE_CXX_COMPILER_FRONTEND_VARIANT MSVC) # for clang-cl mode
+
+#set(CMAKE_C_COMPILER_ID Clang)  #for 
+
+# for clang-cl mode
+set(CMAKE_C_SIMULATE_ID MSVC)
+set(CMAKE_C_COMPILER_FRONTEND_VARIANT MSVC) # for clang-cl mode
+
+
+# ######################################################################################
 get_property( _CMAKE_IN_TRY_COMPILE GLOBAL PROPERTY IN_TRY_COMPILE )
 if(NOT _CMAKE_IN_TRY_COMPILE)
     # Set runtime library.
@@ -128,7 +147,7 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
     
     #CMAKE_HOST_SYSTEM_PROCESSOR
     message(STATUS "The current host sys is " ${CMAKE_SYSTEM_PROCESSOR} "winkit lib path is ${CMAKE_WINDOWS_KITS_LIBDIR}/um vc lib ${CMAKE_VCLibDir}")
-    message(STATUS "The current host arch is " ${CMAKE_HOST_SYSTEM_PROCESSOR})
+    message(STATUS "The current host arch is " ${CMAKE_HOST_SYSTEM_PROCESSOR} "msvc version ${MSVC_VERSION}")
     
     # ENV variable has no CACHE
     set(ENV{LIB} "${CMAKE_VCLibDir};${CMAKE_WINDOWS_KITS_LIBDIR}/um/${VCPKG_TARGET_ARCHITECTURE};${CMAKE_WINDOWS_KITS_LIBDIR}/ucrt/${VCPKG_TARGET_ARCHITECTURE}")
