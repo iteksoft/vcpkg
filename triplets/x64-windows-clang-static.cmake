@@ -58,4 +58,4 @@ if(DEFINED VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE)
     include("${VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE}")
 endif()
 
-message(WARNING "IN vcpkg trilet last line !!! info:: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER} ")
+message(STATUS "IN vcpkg trilet last line !!! info:: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER} ")

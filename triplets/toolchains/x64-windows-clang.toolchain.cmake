@@ -2,7 +2,7 @@ include_guard(GLOBAL)
 #include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 #include("${CMAKE_CURRENT_LIST_DIR}/${VCPKG_TARGET_TRIPLET}.cmake")
 
-
+include("${CMAKE_CURRENT_LIST_DIR}/x64-windows-findvc.cmake")
 #[[
 # triplet or toolchain does not support these settings?
 # from testing no effects by CMake toolchain
@@ -100,4 +100,16 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
     add_compile_definitions(_CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
     add_compile_definitions(_ATL_SECURE_NO_DEPRECATE _SCL_SECURE_NO_WARNINGS)
 
+    if(${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x64|^X64")
+        set(CMAKE_VCIncludeDir "${CMAKE_VCToolsInstallDir}/include")   
+        set(CMAKE_VCLibDir "${CMAKE_VCToolsInstallDir}/lib/${VCPKG_TARGET_ARCHITECTURE}")   
+    endif()
+    
+    #CMAKE_HOST_SYSTEM_PROCESSOR
+    message(STATUS "The current host sys is " ${CMAKE_SYSTEM_PROCESSOR} "winkit lib path is ${CMAKE_WINDOWS_KITS_LIBDIR}/um")
+    message(STATUS "The current host arch is " ${CMAKE_HOST_SYSTEM_PROCESSOR})
+    
+    # ENV variable has no CACHE
+    set(ENV{LIB} "${CMAKE_VCLibDir};${CMAKE_WINDOWS_KITS_LIBDIR}/um/${VCPKG_TARGET_ARCHITECTURE}")
+    
 endif()
