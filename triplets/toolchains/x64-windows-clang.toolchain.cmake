@@ -66,13 +66,12 @@ set(CMAKE_MT ${CLANG-CL-MTEXE} CACHE STRING "" FORCE)
 #set(CMAKE_CXX_COMPILER_ID_RUN TRUE) # for skipping compiler id check
 
 set(CMAKE_CXX_COMPILER_ID Clang)  #for 
-
 # for clang-cl mode
 set(CMAKE_CXX_SIMULATE_ID MSVC)
 set(CMAKE_CXX_COMPILER_FRONTEND_VARIANT MSVC) # for clang-cl mode
 
-#set(CMAKE_C_COMPILER_ID Clang)  #for 
 
+set(CMAKE_C_COMPILER_ID Clang)  #for 
 # for clang-cl mode
 set(CMAKE_C_SIMULATE_ID MSVC)
 set(CMAKE_C_COMPILER_FRONTEND_VARIANT MSVC) # for clang-cl mode
