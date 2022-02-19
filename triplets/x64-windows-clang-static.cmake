@@ -1,5 +1,14 @@
 # original from 
 # https://github.com/Neumann-A/my-vcpkg-triplets
+message(STATUS "-->INIT TRIPLET ${CMAKE_CURRENT_SOURCE_DIR};; cmakefile: ${CMAKE_CURRENT_LIST_FILE} ")
+
+if(DEFINED ENV{VCPKG_TRACE_TOOLCHAIN})
+  set(VCPKG_TRACE_TOOLCHAIN $ENV{VCPKG_TRACE_TOOLCHAIN})
+endif()
+
+if (DEFINED VCPKG_TRACE_TOOLCHAIN)
+    message(STATUS "-->ENTER VCPKG Toolchain triplet ${CMAKE_CURRENT_SOURCE_DIR};; cmakefile: ${CMAKE_CURRENT_LIST_FILE} ")
+endif()
 
 # use LLVM_ROOT instead
 set(VCPKG_TARGET_ARCHITECTURE x64)
@@ -58,7 +67,7 @@ if(DEFINED VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE)
     include("${VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE}")
 endif()
 
-if(DEFINED VCPKG_DEBUG_TOOLCHAIN)
-    message(STATUS "IN vcpkg trilet last line !!! info:: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER} ")
+if(DEFINED VCPKG_TRACE_TOOLCHAIN)
+    message(STATUS "<--LEAVE vcpkg trilet!!! info:: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER} ")
     message(STATUS "more info:: comiler id ${CMAKE_CXX_COMPILER_ID} sim id  ${CMAKE_CXX_SIMULATE_ID}  frontend::${CMAKE_CXX_COMPILER_FRONTEND_VARIANT} msvc::${MSVC_TOOLSET_VERSION}")
 endif()
