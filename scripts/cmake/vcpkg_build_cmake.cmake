@@ -95,6 +95,7 @@ function(vcpkg_build_cmake)
             endif()
 
             if(arg_DISABLE_PARALLEL)
+             
                 vcpkg_execute_build_process(
                     COMMAND
                         "${CMAKE_COMMAND}" --build . --config "${config}" ${target_param}
@@ -103,6 +104,7 @@ function(vcpkg_build_cmake)
                     LOGNAME "${arg_LOGFILE_ROOT}-${TARGET_TRIPLET}-${short_build_type}"
                 )
             else()
+              message(STATUS "vcpkg_execute_build_process parallel ==> ${CMAKE_COMMAND} ${config}")
                 vcpkg_execute_build_process(
                     COMMAND
                         "${CMAKE_COMMAND}" --build . --config "${config}" ${target_param}

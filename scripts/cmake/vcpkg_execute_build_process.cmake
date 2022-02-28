@@ -73,6 +73,8 @@ function(vcpkg_execute_build_process)
     set(log_err "${log_prefix}-err.log")
     set(all_logs "${log_out}" "${log_err}")
 
+    message("==> vcpkg_execute_build_process ==> ${arg_COMMAND}")
+
     execute_process(
         COMMAND ${arg_COMMAND}
         WORKING_DIRECTORY "${arg_WORKING_DIRECTORY}"

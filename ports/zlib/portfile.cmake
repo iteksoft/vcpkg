@@ -29,7 +29,7 @@ vcpkg_configure_cmake(
     OPTIONS_DEBUG
         -DSKIP_INSTALL_HEADERS=ON
 )
-
+message("zlib porfile.cmake:: after config cmake")
 vcpkg_install_cmake()
 file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/vcpkg-cmake-wrapper.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
 

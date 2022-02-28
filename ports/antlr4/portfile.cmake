@@ -1,5 +1,6 @@
 set(VERSION 4.9.3)
 
+message("==> port antlr4 ==> before beginning vcpkg_download_distfile")
 vcpkg_download_distfile(ARCHIVE
     URLS "https://www.antlr.org/download/antlr4-cpp-runtime-${VERSION}-source.zip"
     FILENAME "antlr4-cpp-runtime-${VERSION}-source.zip"
@@ -25,13 +26,18 @@ vcpkg_extract_source_archive_ex(
         fix_utfcpp_dependency.patch
 )
 
+message("==> port antlr4 ==> vcpkg_cmake_configure")
 vcpkg_cmake_configure(
     SOURCE_PATH ${SOURCE_PATH}
     OPTIONS_DEBUG -DLIB_OUTPUT_DIR=${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg/dist
     OPTIONS_RELEASE -DLIB_OUTPUT_DIR=${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/dist
 )
 
+message("==> port antlr4 ==> vcpkg_cmake_install")
 vcpkg_cmake_install()
+
+
+message("==> port antlr4 ==> after vcpkg_cmake_install")
 
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/share/doc
                     ${CURRENT_PACKAGES_DIR}/debug/share

@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.21)
 
+message("ports.cmake included the first line===")
+
 set(SCRIPTS "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Location to stored scripts")
 list(APPEND CMAKE_MODULE_PATH "${SCRIPTS}/cmake")
+
+
+
 include("${SCRIPTS}/cmake/execute_process.cmake")
 include("${SCRIPTS}/cmake/vcpkg_acquire_msys.cmake")
 include("${SCRIPTS}/cmake/vcpkg_add_to_path.cmake")
@@ -61,6 +66,9 @@ include("${SCRIPTS}/cmake/z_vcpkg_forward_output_variable.cmake")
 include("${SCRIPTS}/cmake/z_vcpkg_function_arguments.cmake")
 include("${SCRIPTS}/cmake/z_vcpkg_get_cmake_vars.cmake")
 include("${SCRIPTS}/cmake/z_vcpkg_prettify_command_line.cmake")
+
+
+message("ports.cmake ==> include all scripts functions scripts/cmake ===")
 
 function(debug_message)
     if(PORT_DEBUG)
@@ -129,6 +137,7 @@ if(CMD MATCHES "^BUILD$")
 
     if (DEFINED VCPKG_PORT_CONFIGS)
         foreach(VCPKG_PORT_CONFIG IN LISTS VCPKG_PORT_CONFIGS)
+            message("ports.cmake ==> ==> ==> include port config ${VCPKG_PORT_CONFIG} ===")
             include("${VCPKG_PORT_CONFIG}")
         endforeach()
     endif()
@@ -142,10 +151,14 @@ if(CMD MATCHES "^BUILD$")
     set(Z_VCPKG_ERROR_LOG_COLLECTION_FILE "${CURRENT_BUILDTREES_DIR}/error-logs-${TARGET_TRIPLET}.txt")
     file(REMOVE "${Z_VCPKG_ERROR_LOG_COLLECTION_FILE}")
 
+    message("ports.cmake ==> before include ${CURRENT_PORT_DIR}/portfile.cmake ===")
     include("${CURRENT_PORT_DIR}/portfile.cmake")
     if(DEFINED PORT)
         include("${SCRIPTS}/build_info.cmake")
     endif()
+
+    message("ports.cmake ==> end of build script in ports.cmake ===")
+
 elseif(CMD MATCHES "^CREATE$")
     file(TO_NATIVE_PATH "${VCPKG_ROOT_DIR}" NATIVE_VCPKG_ROOT_DIR)
     file(TO_NATIVE_PATH "${DOWNLOADS}" NATIVE_DOWNLOADS)

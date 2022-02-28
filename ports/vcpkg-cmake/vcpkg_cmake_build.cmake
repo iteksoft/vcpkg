@@ -38,6 +38,7 @@ if(Z_VCPKG_CMAKE_BUILD_GUARD)
 endif()
 set(Z_VCPKG_CMAKE_BUILD_GUARD ON CACHE INTERNAL "guard variable")
 
+message("==> port vcpkg-cmake ==> vcpkg_cmake_build included!!")
 function(vcpkg_cmake_build)
     cmake_parse_arguments(PARSE_ARGV 0 "arg" "DISABLE_PARALLEL;ADD_BIN_TO_PATH" "TARGET;LOGFILE_BASE" "")
 
