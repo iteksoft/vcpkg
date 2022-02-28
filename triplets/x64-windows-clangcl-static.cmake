@@ -1,5 +1,16 @@
 # original from 
 # https://github.com/Neumann-A/my-vcpkg-triplets
+message(STATUS "-->INIT TRIPLET ${CMAKE_CURRENT_SOURCE_DIR};; cmakefile: ${CMAKE_CURRENT_LIST_FILE} ")
+
+if(DEFINED ENV{VCPKG_TRACE_TOOLCHAIN})
+  set(VCPKG_TRACE_TOOLCHAIN $ENV{VCPKG_TRACE_TOOLCHAIN})
+endif()
+
+if (DEFINED VCPKG_TRACE_TOOLCHAIN)
+    message(STATUS "-->ENTER VCPKG Toolchain triplet ${CMAKE_CURRENT_SOURCE_DIR};; cmakefile: ${CMAKE_CURRENT_LIST_FILE} ")
+endif()
+
+
 
 # use LLVM_ROOT instead
 set(VCPKG_TARGET_ARCHITECTURE x64)
@@ -14,17 +25,24 @@ if (DEFINED ENV{ProgramW6432})
 else()
     file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" PROG_ROOT)
 endif()
-if (DEFINED ENV{LLVMInstallDir})
+if (DEFINED ENV{LLVM_ROOT})
     file(TO_CMAKE_PATH "${LLVM_ROOT}/bin" POSSIBLE_LLVM_BIN_DIR)
 else()
     file(TO_CMAKE_PATH "${PROG_ROOT}/LLVM/bin" POSSIBLE_LLVM_BIN_DIR)
 endif()
 
 if(NOT PORT MATCHES "(boost|hwloc|libpq|icu|harfbuzz|qt*|benchmark|gtest)")
+
+    # VCPKG_CHAINLOAD_TOOLCHAIN_FILE already defined, running in cmake cmdline mode by cmake -DCMAKE_TOOLCHAIN_FILE=vcpkg.cmake mode
+    # in cmake cmdline mode, VCPKG_CHAINLOAD_TOOLCHAIN_FILE will be included in vcpkg.cmake
+    # in port mode, (vcpkg install mode), it will load triplet file first (in triplets/...cmake), these variables will be passed into cmake cmdline which is called by vcpkg
+    #
     if(DEFINED VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
-        set(VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-clang.toolchain.cmake")
+        # if VCPKG_CHAINLOAD_TOOLCHAIN_FILE == current triplet file, load our default toolchain. called by cmake direct cmdline mode vcpkg.cmake
+        set(Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clangcl.cmake")
     else()
-        set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-clang.toolchain.cmake")
+        # not defined, worked as a triplet in vcpkg port mode, set the vcpkg toolchain file, which will be included in vcpkg.cmake
+        set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clangcl.cmake")
     endif()
 
     if(DEFINED VCPKG_PLATFORM_TOOLSET)
@@ -37,7 +55,7 @@ if(NOT PORT MATCHES "(boost|hwloc|libpq|icu|harfbuzz|qt*|benchmark|gtest)")
 #     set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/x64-windows-llvm.toolchain.cl.cmake")
 elseif(PORT MATCHES "(benchmark|gtest|qt*)")
     # Cannot have LTO enabled in gtest or benchmark since this eliminates/remove main from (gtest|benchmark)_main
-    set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/x64-windows-clang.toolchain-no-lto.cmake")
+    set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "$${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clangcl.cmake")
     if(DEFINED VCPKG_PLATFORM_TOOLSET)
         set(VCPKG_PLATFORM_TOOLSET ClangCL)
     endif()
@@ -53,12 +71,11 @@ set(VCPKG_LOAD_VCVARS_ENV ON)
 set(VCPKG_C_FLAGS "-arch:AVX")
 set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} -EHsc -GR")
 
-
-if(DEFINED VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE)
-    include("${VCPKG_PLUGINITEK_LOAD_TOOLCHAIN_FILE}")
+if(DEFINED Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET)
+    include("${Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET}")
 endif()
 
-if(DEFINED VCPKG_DEBUG_TOOLCHAIN)
-    message(STATUS "IN vcpkg trilet last line !!! info:: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER} ")
+if(DEFINED VCPKG_TRACE_TOOLCHAIN)
+    message(STATUS "<--LEAVE vcpkg trilet!!! info:: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER} ")
     message(STATUS "more info:: comiler id ${CMAKE_CXX_COMPILER_ID} sim id  ${CMAKE_CXX_SIMULATE_ID}  frontend::${CMAKE_CXX_COMPILER_FRONTEND_VARIANT} msvc::${MSVC_TOOLSET_VERSION}")
 endif()
