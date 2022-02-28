@@ -2,7 +2,7 @@ include_guard(GLOBAL)
 #include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 #include("${CMAKE_CURRENT_LIST_DIR}/${VCPKG_TARGET_TRIPLET}.cmake")
 
-include("${CMAKE_CURRENT_LIST_DIR}/x64-windows-findvc.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/x64-windows-util.findvc.cmake")
 #[[
 # triplet or toolchain does not support these settings?
 # from testing no effects by CMake toolchain
@@ -42,7 +42,6 @@ find_program(CLANGCL_MTEXE
         DOC "msvc manifest compiler"
         NO_PACKAGE_ROOT_PATH NO_CMAKE_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH
         )
-message(STATUS "vc bin ${CLANG-CL-MTEXE}")
 
 if(NOT CLANGCL_EXECUTABLE)
     message(SEND_ERROR "clang-cl was not found!") # Not a FATAL_ERROR due to being a toolchain!
@@ -83,6 +82,7 @@ set(CMAKE_C_COMPILER_FRONTEND_VARIANT MSVC) # for clang-cl mode
 # ######################################################################################
 get_property( _CMAKE_IN_TRY_COMPILE GLOBAL PROPERTY IN_TRY_COMPILE )
 if(NOT _CMAKE_IN_TRY_COMPILE)
+
     # Set runtime library.
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<STREQUAL:${VCPKG_CRT_LINKAGE},dynamic>:DLL>" CACHE STRING "")
     if(VCPKG_CRT_LINKAGE STREQUAL "dynamic")
@@ -101,6 +101,14 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
         set(CHARSET_FLAG)
     endif()
 
+
+    # Add windows defines.
+    if (WIN32)
+        add_compile_definitions(_WIN64 _WIN32_WINNT=0x0A00 WINVER=0x0A00)
+        add_compile_definitions(_CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
+        add_compile_definitions(_ATL_SECURE_NO_DEPRECATE _SCL_SECURE_NO_WARNINGS)
+    endif()
+    
     # Set compiler flags.
     set(CLANG_FLAGS "/clang:-fasm /clang:-fopenmp-simd")
     # Disable logo for compiler and linker.
@@ -136,12 +144,7 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
     set(CMAKE_RC_FLAGS_INIT "${CMAKE_CL_NOLOGO} -c65001 -DWIN32")
     set(CMAKE_RC_FLAGS_DEBUG_INIT "-D_DEBUG")
 
-    # Add windows defines.
-    if (WIN32)
-        add_compile_definitions(_WIN64 _WIN32_WINNT=0x0A00 WINVER=0x0A00)
-        add_compile_definitions(_CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
-        add_compile_definitions(_ATL_SECURE_NO_DEPRECATE _SCL_SECURE_NO_WARNINGS)
-    endif()
+
 
     if(${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x64|^X64")
         set(CMAKE_VCIncludeDir "${CMAKE_VCToolsInstallDir}/include")
