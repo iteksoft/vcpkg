@@ -68,12 +68,16 @@ set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
 set(VCPKG_POLICY_SKIP_DUMPBIN_CHECKS enabled)
 set(VCPKG_LOAD_VCVARS_ENV ON)
 
-set(VCPKG_C_FLAGS "-arch:AVX")
+#set(VCPKG_C_FLAGS "-arch:AVX")
+set(VCPKG_C_FLAGS "")
 set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} -EHsc -GR")
 
 if(DEFINED Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET)
     include("${Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET}")
 endif()
+
+#include_directories("C:/temp/inc")
+#link_directories("C:/temp/lib")
 
 if(DEFINED VCPKG_TRACE_TOOLCHAIN)
     message(STATUS "<--LEAVE vcpkg trilet!!! info:: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER} ")
