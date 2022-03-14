@@ -73,10 +73,10 @@ endif()
 if (NOT DEFINED ENV{WindowsSDKVersion})
     set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION "")
 
-    SUBDIRLIST(__tmpdirlist "${CMAKE_WINDOWS_KITS_DIR}/Lib")
-    # message(STATUS "list of winkits vers :: " "${CMAKE_WINDOWS_KITS_DIR}/Lib" " ==> " ${__tmpdirlist})
-    list(SORT __tmpdirlist COMPARE NATURAL ORDER DESCENDING)
-    list(GET __tmpdirlist 0 CMAKE_WINDOWS_KITS_VERSION)
+    SUBDIRLIST(ztmp_dirlist "${CMAKE_WINDOWS_KITS_DIR}/Lib")
+    # message(STATUS "list of winkits vers :: " "${CMAKE_WINDOWS_KITS_DIR}/Lib" " ==> " ${ztmp_dirlist})
+    list(SORT ztmp_dirlist COMPARE NATURAL ORDER DESCENDING)
+    list(GET ztmp_dirlist 0 CMAKE_WINDOWS_KITS_VERSION)
 
     set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION ${CMAKE_WINDOWS_KITS_VERSION})
     set(ENV{WindowsSDKVersion} ${CMAKE_WINDOWS_KITS_VERSION})
@@ -85,12 +85,12 @@ if (NOT DEFINED ENV{WindowsSDKVersion})
 
 
 else()
-    cmake_path(SET __tmpsdkver NORMALIZE $ENV{WindowsSDKVersion})
-    cmake_path(GET __tmpsdkver PARENT_PATH CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
+    cmake_path(SET ztmp_sdkver NORMALIZE $ENV{WindowsSDKVersion})
+    cmake_path(GET ztmp_sdkver PARENT_PATH CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
     set(CMAKE_WINDOWS_KITS_VERSION ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION})
 
     # get the major version
-    string(REGEX MATCH "([0-9]+)(\\.[0-9]+)*" __tmpre ${__tmpsdkver})
+    string(REGEX MATCH "([0-9]+)(\\.[0-9]+)*" __tmpre ${ztmp_sdkver})
     set(CMAKE_WINDOWS_KITS_MAJORVER ${CMAKE_MATCH_1})
 
     if (NOT DEFINED ENV{WindowsSdkDir})
@@ -168,9 +168,9 @@ if (NOT DEFINED ENV{VSINSTALLDIR})
             string(SUBSTRING ${MSVC_TOOLSET_VERSION} 0 2 MSVC_TOOLSET_VERMAJOR)
             string(SUBSTRING ${MSVC_TOOLSET_VERSION} 2 1 MSVC_TOOLSET_VERMINOR)
 
-            #  string(REGEX MATCH "^${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR}([0-9])*(\\.[0-9]+)*" __tmpre ${__tmpsdkver})            
+            #  string(REGEX MATCH "^${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR}([0-9])*(\\.[0-9]+)*" __tmpre ${ztmp_sdkver})            
             SUBDIRMATCH(CMAKE_VCToolsVersion "^(${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR})([0-9])*(\\.[0-9]+)*" "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC")
-            SUBDIRLIST(__tmpdirlist "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC")
+            SUBDIRLIST(ztmp_dirlist "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC")
 
             #set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION ${CMAKE_WINDOWS_KITS_VERSION})
             #set(ENV{WindowsSDKVersion} ${CMAKE_WINDOWS_KITS_VERSION})
@@ -280,9 +280,9 @@ else()
             string(SUBSTRING ${MSVC_TOOLSET_VERSION} 0 2 MSVC_TOOLSET_VERMAJOR)
             string(SUBSTRING ${MSVC_TOOLSET_VERSION} 2 1 MSVC_TOOLSET_VERMINOR)
 
-            #  string(REGEX MATCH "^${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR}([0-9])*(\\.[0-9]+)*" __tmpre ${__tmpsdkver})            
+            #  string(REGEX MATCH "^${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR}([0-9])*(\\.[0-9]+)*" __tmpre ${ztmp_sdkver})            
             SUBDIRMATCH(CMAKE_VCToolsVersion "^(${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR})([0-9])*(\\.[0-9]+)*" "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC")
-            SUBDIRLIST(__tmpdirlist "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC")
+            SUBDIRLIST(ztmp_dirlist "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC")
 
             #set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION ${CMAKE_WINDOWS_KITS_VERSION})
             #set(ENV{WindowsSDKVersion} ${CMAKE_WINDOWS_KITS_VERSION})
