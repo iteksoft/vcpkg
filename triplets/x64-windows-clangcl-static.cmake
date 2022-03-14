@@ -39,10 +39,10 @@ if(NOT PORT MATCHES "(boost|hwloc|libpq|icu|harfbuzz|qt*|benchmark|gtest)")
     #
     if(DEFINED VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
         # if VCPKG_CHAINLOAD_TOOLCHAIN_FILE == current triplet file, load our default toolchain. called by cmake direct cmdline mode vcpkg.cmake
-        set(Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clangcl.cmake")
+        set(Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clang-cl.cmake")
     else()
         # not defined, worked as a triplet in vcpkg port mode, set the vcpkg toolchain file, which will be included in vcpkg.cmake
-        set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clangcl.cmake")
+        set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clang-cl.cmake")
     endif()
 
     if(DEFINED VCPKG_PLATFORM_TOOLSET)
