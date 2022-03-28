@@ -6,7 +6,9 @@
 #
 # VC related variables
 
-# CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION
+# CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION      10.0.19041.0
+# CMAKE_WINDOWS_KITS_10_DIR     "C:\Program Files (x86)\Windows Kits\10\"
+
 # MSVC_WINDOWS_KITS_DIR
 # MSVC_WINDOWS_KITS_VERMAJOR
 # MSVC_WINDOWS_KITS_INCDIR
@@ -77,7 +79,7 @@ if (WIN32)
     # message(STATUS " we are in Windows!!")
 endif()
 
-FILE(TO_CMAKE_PATH "$ENV{ProgramFiles} (x86)" programfilesx86)
+file(TO_CMAKE_PATH "$ENV{ProgramFiles} (x86)" programfilesx86)
 
 if (NOT DEFINED ENV{WindowsSdkDir})
     if (NOT DEFINED MSVC_WINDOWS_KITS_VERMAJOR)
@@ -180,8 +182,15 @@ if (NOT DEFINED ENV{VCToolsInstallDir})
         set(MSVC_TOOLSET_VERSION ${MSVC_TOOLSET_VERSION_INIT})
     endif()
 
-    set(MSVC_VS_INSTALLDIR "${programfilesx86}/Microsoft Visual Studio/${MSVC_TOOLSET_VERNAME}/Professional")
+    if (NOT DEFINED ENV{VSINSTALLDIR})
+        set(MSVC_VS_INSTALLDIR "${programfilesx86}/Microsoft Visual Studio/${MSVC_TOOLSET_VERNAME}/Professional")
+    else()
+        # use the ENV{VSINSTALLDIR}
+        cmake_path(SET MSVC_VS_INSTALLDIR NORMALIZE $ENV{VSINSTALLDIR})
+    endif()
 
+    #
+    # MSVC_TOOLSET_VERSION like 14.29.30133
     if (NOT DEFINED ENV{VCToolsVersion})
 
         string(SUBSTRING ${MSVC_TOOLSET_VERSION} 0 2 MSVC_TOOLSET_VERMAJOR)
@@ -231,15 +240,6 @@ else()
 
 endif()
 
-
-
-if (NOT DEFINED ENV{VSINSTALLDIR})
-
-
-else()
-    cmake_path(SET MSVC_VS_INSTALLDIR NORMALIZE $ENV{VSINSTALLDIR})
-
-endif()
 
 
 if (NOT DEFINED ENV{VSINSTALLDIR})
