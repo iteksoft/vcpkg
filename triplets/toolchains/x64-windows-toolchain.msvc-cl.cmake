@@ -49,14 +49,14 @@ set(CMAKE_MT "${MSVC_WINDOWS_KITS_MTEXE}" CACHE STRING "" FORCE)
 
 set(CMAKE_CXX_COMPILER_ID MSVC)  # for MSVC cl.exe
 # for clang-cl mode
-set(CMAKE_CXX_SIMULATE_ID MSVC)
-set(CMAKE_CXX_COMPILER_FRONTEND_VARIANT MSVC) # for clang-cl mode
+set(CMAKE_CXX_SIMULATE_ID "")
+set(CMAKE_CXX_COMPILER_FRONTEND_VARIANT "") # for clang-cl mode
 
 
 set(CMAKE_C_COMPILER_ID MSVC)  #for
 # for clang-cl mode
-set(CMAKE_C_SIMULATE_ID MSVC)
-set(CMAKE_C_COMPILER_FRONTEND_VARIANT MSVC) # for clang-cl mode
+set(CMAKE_C_SIMULATE_ID "")
+set(CMAKE_C_COMPILER_FRONTEND_VARIANT "") # for clang-cl mode
 
 
 # ######################################################################################
