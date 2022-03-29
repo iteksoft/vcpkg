@@ -40,29 +40,21 @@ if(NOT PORT MATCHES "(boost|hwloc|libpq|icu|harfbuzz|qt*|benchmark|gtest)")
     #
     if(DEFINED VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
         # if VCPKG_CHAINLOAD_TOOLCHAIN_FILE == current triplet file, load our default toolchain. called by cmake direct cmdline mode vcpkg.cmake
-        set(Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clang-cl.cmake")
+        set(Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.msvc-cl.cmake")
     else()
         # not defined, worked as a triplet in vcpkg port mode, set the vcpkg toolchain file, which will be included in vcpkg.cmake
-        set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clang-cl.cmake")
+        set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.msvc-cl.cmake")
     endif()
 
-    if(DEFINED VCPKG_PLATFORM_TOOLSET)
-        set(VCPKG_PLATFORM_TOOLSET ClangCL)
-    endif()
-    if(EXISTS "${POSSIBLE_LLVM_BIN_DIR}")
-        set(ENV{PATH} "${POSSIBLE_LLVM_BIN_DIR};$ENV{PATH}")
-    endif()
+    # VCPKG_PLATFORM_TOOLSET v142
+
 # elseif(PORT MATCHES "(qt*)")
 #     set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/x64-windows-llvm.toolchain.cl.cmake")
 elseif(PORT MATCHES "(benchmark|gtest|qt*)")
     # Cannot have LTO enabled in gtest or benchmark since this eliminates/remove main from (gtest|benchmark)_main
-    set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "$${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clangcl.cmake")
-    if(DEFINED VCPKG_PLATFORM_TOOLSET)
-        set(VCPKG_PLATFORM_TOOLSET ClangCL)
-    endif()
-    if(EXISTS "${POSSIBLE_LLVM_BIN_DIR}")
-        set(ENV{PATH} "${POSSIBLE_LLVM_BIN_DIR};$ENV{PATH}")
-    endif()
+    set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "$${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.msvc-cl.cmake")
+
+    # VCPKG_PLATFORM_TOOLSET
 endif()
 
 set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
