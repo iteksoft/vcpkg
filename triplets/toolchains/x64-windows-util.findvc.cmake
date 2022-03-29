@@ -128,6 +128,16 @@ set(MSVC_WINDOWS_KITS_INCDIR "${MSVC_WINDOWS_KITS_DIR}/Include/${MSVC_WINDOWS_KI
 set(MSVC_WINDOWS_KITS_LIBDIR "${MSVC_WINDOWS_KITS_DIR}/Lib/${MSVC_WINDOWS_KITS_VERSION}")
 set(MSVC_WINDOWS_KITS_BINDIR "${MSVC_WINDOWS_KITS_DIR}/bin/${MSVC_WINDOWS_KITS_VERSION}")
 
+if(${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x64|^X64")
+    set(MSVC_WINDOWS_KITS_MTEXE "{MSVC_WINDOWS_KITS_BINDIR}/x64/mt.exe")
+    set(MSVC_WINDOWS_KITS_RCEXE "{MSVC_WINDOWS_KITS_BINDIR}/x64/rc.exe")
+
+elseif (${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x86|^X86")
+    set(MSVC_WINDOWS_KITS_MTEXE "{MSVC_WINDOWS_KITS_BINDIR}/x86/mt.exe")
+    set(MSVC_WINDOWS_KITS_RCEXE "{MSVC_WINDOWS_KITS_BINDIR}/x86/rc.exe")
+
+endif()
+
 #cmake_path(GET newversion PARENT_PATH newver1)
 message(STATUS "sdkversion:: " ${MSVC_WINDOWS_KITS_VERSION} " envvar " $ENV{WindowsSDKVersion} "  new ver1:: " ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION})
 
@@ -269,205 +279,6 @@ else()
 
 endif()
 
-set(MSVC_VERSION ${MSVC_TOOLSET_VERSION} CACHE STRING "MSVC_VERSION")
-
-#[[
-if (NOT DEFINED ENV{VSINSTALLDIR})
-    # set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION "")
-
-    if (NOT DEFINED ENV{VCToolsInstallDir})
-
-        if (NOT DEFINED ENV{VisualStudioVersion})
-            if (DEFINED MSVC_TOOLSET_VERNAME_INIT)
-                set(MSVC_TOOLSET_VERNAME ${MSVC_TOOLSET_VERNAME_INIT})
-                set(MSVC_TOOLSET_VERSION_INIT "142")
-            else()
-                set(MSVC_TOOLSET_VERNAME "2019")
-                set(MSVC_TOOLSET_VERSION_INIT "142")
-            endif()
-
-            set(MSVC_TOOLSET_VERSION ${MSVC_TOOLSET_VERSION_INIT})
-        else()
-            if ($ENV{VisualStudioVersion} STREQUAL "16.0")
-                set(MSVC_TOOLSET_VERNAME "2019")
-                set(MSVC_TOOLSET_VERSION_INIT "142")
-            elseif($ENV{VisualStudioVersion} STREQUAL "17.0")
-                set(MSVC_TOOLSET_VERNAME "2022")
-                set(MSVC_TOOLSET_VERSION_INIT "143")
-            elseif($ENV{VisualStudioVersion} STREQUAL "15.0")
-                set(MSVC_TOOLSET_VERNAME "2017")
-                set(MSVC_TOOLSET_VERSION_INIT "141")
-            elseif($ENV{VisualStudioVersion} STREQUAL "14.0")
-                set(MSVC_TOOLSET_VERNAME "2015")
-                set(MSVC_TOOLSET_VERSION_INIT "140")
-            elseif($ENV{VisualStudioVersion} STREQUAL "12.0")
-                set(MSVC_TOOLSET_VERNAME "2013")
-                set(MSVC_TOOLSET_VERSION_INIT "120")
-            else()
-                set(MSVC_TOOLSET_VERNAME "2019")
-                set(MSVC_TOOLSET_VERSION_INIT "142")
-            endif()
-
-            #
-            set(MSVC_TOOLSET_VERSION ${MSVC_TOOLSET_VERSION_INIT})
-        endif()
-
-        set(MSVC_VS_INSTALLDIR "${programfilesx86}/Microsoft Visual Studio/${MSVC_TOOLSET_VERNAME}/Professional")   
-
-        if (NOT DEFINED ENV{VCToolsVersion})
-      
-            string(SUBSTRING ${MSVC_TOOLSET_VERSION} 0 2 MSVC_TOOLSET_VERMAJOR)
-            string(SUBSTRING ${MSVC_TOOLSET_VERSION} 2 1 MSVC_TOOLSET_VERMINOR)
-
-            #  string(REGEX MATCH "^${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR}([0-9])*(\\.[0-9]+)*" ztmp_re ${ztmp_sdkver})            
-            SUBDIRMATCH(MSVC_VCTOOLS_VERSION "^(${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR})([0-9])*(\\.[0-9]+)*" "${MSVC_VS_INSTALLDIR}/VC/Tools/MSVC")
-            SUBDIRLIST(ztmp_dirlist "${MSVC_VS_INSTALLDIR}/VC/Tools/MSVC")
-
-            #set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION ${MSVC_WINDOWS_KITS_VERSION})
-            #set(ENV{WindowsSDKVersion} ${MSVC_WINDOWS_KITS_VERSION})
-
-            set(MSVC_VCTOOLS_INSTALLDIR "${MSVC_VS_INSTALLDIR}/VC/Tools/MSVC/${MSVC_VCTOOLS_VERSION}")   
-        else()
-            set(MSVC_VCTOOLS_VERSION $ENV{VCToolsVersion})
-            set(MSVC_VCTOOLS_INSTALLDIR "${MSVC_VS_INSTALLDIR}/VC/Tools/MSVC/$ENV{VCToolsVersion}")   
-        endif()
-
-        if (DEFINED VCPKG_TRACE_TOOLCHAIN)
-            message(STATUS "${MSVC_TOOLSET_VERMAJOR}.${MSVC_TOOLSET_VERMINOR}"  "match :: " "${MSVC_VCTOOLS_VERSION} in  ${MSVC_VCTOOLS_INSTALLDIR}")
-        endif()
-
-    else()
-        #
-        cmake_path(SET MSVC_VCTOOLS_INSTALLDIR NORMALIZE $ENV{VCToolsInstallDir})
-       
-        string(FIND ${MSVC_VCTOOLS_INSTALLDIR} "/VC/Tools/MSVC/" ztmp_findpos)
-        if(NOT ztmp_findpos EQUAL -1)
-            string(SUBSTRING ${MSVC_VCTOOLS_INSTALLDIR} 0 ztmp_findpos MSVC_VS_INSTALLDIR)
-            string(SUBSTRING ${MSVC_VCTOOLS_INSTALLDIR} ztmp_findpos+15 -1 MSVC_VCTOOLS_VERSION)
-        endif()
-
-
-        string(REGEX MATCH "([0-9]+)(\\.[0-9]+)+" ztmp_re ${MSVC_VCTOOLS_VERSION})
-        set(MSVC_VCTOOLS_VERSION ${ztmp_re})
-
-        string(REGEX MATCH "([0-9]+)\\.([0-9])" ztmp_re ${MSVC_VCTOOLS_VERSION})
-        set(MSVC_TOOLSET_VERMAJOR ${CMAKE_MATCH_1})
-        set(MSVC_TOOLSET_VERMINOR ${CMAKE_MATCH_2})
-        set(MSVC_TOOLSET_VERSION "${MSVC_TOOLSET_VERMAJOR}${MSVC_TOOLSET_VERMINOR}")
-
-        #string(REGEX MATCH "^[a-zA-Z]/"MSVC_VS_INSTALLDIR ${MSVC_VCTOOLS_INSTALLDIR})
-
-        message(STATUS "${MSVC_TOOLSET_VERMAJOR}.${MSVC_TOOLSET_VERMINOR}"  "match :: " "${MSVC_VCTOOLS_VERSION} in  ${MSVC_VS_INSTALLDIR}")
-    endif()
-
-
-else()
-    cmake_path(SET MSVC_VS_INSTALLDIR NORMALIZE $ENV{VSINSTALLDIR})
-
-    if (NOT DEFINED ENV{VCToolsInstallDir})
-
-        if (NOT DEFINED ENV{VisualStudioVersion})
-
-            string(REGEX MATCH "([0-9]+)/" ztmp_re ${MSVC_VS_INSTALLDIR})
-            set(MSVC_TOOLSET_VERNAME ${CMAKE_MATCH_1})
-
-            if (${MSVC_TOOLSET_VERNAME} STREQUAL "2022")
-                set(MSVC_TOOLSET_VERSION_INIT "143")
-            elseif(${MSVC_TOOLSET_VERNAME} STREQUAL "2019")
-                set(MSVC_TOOLSET_VERSION_INIT "142")
-            elseif(${MSVC_TOOLSET_VERNAME} STREQUAL "2017")
-                set(MSVC_TOOLSET_VERSION_INIT "141")
-            elseif(${MSVC_TOOLSET_VERNAME} STREQUAL "2015")
-                set(MSVC_TOOLSET_VERSION_INIT "140")
-            elseif(${MSVC_TOOLSET_VERNAME} STREQUAL "2013")
-                set(MSVC_TOOLSET_VERSION_INIT "120")
-            else()
-                set(MSVC_TOOLSET_VERNAME "2019")
-                set(MSVC_TOOLSET_VERSION_INIT "142")
-            endif()
-
-            set(MSVC_TOOLSET_VERSION ${MSVC_TOOLSET_VERSION_INIT})
-
-        else()
-            if ($ENV{VisualStudioVersion} STREQUAL "16.0")
-                set(MSVC_TOOLSET_VERNAME "2019")
-                set(MSVC_TOOLSET_VERSION_INIT "142")
-            elseif($ENV{VisualStudioVersion} STREQUAL "17.0")
-                set(MSVC_TOOLSET_VERNAME "2022")
-                set(MSVC_TOOLSET_VERSION_INIT "143")
-            elseif($ENV{VisualStudioVersion} STREQUAL "15.0")
-                set(MSVC_TOOLSET_VERNAME "2017")
-                set(MSVC_TOOLSET_VERSION_INIT "141")
-            elseif($ENV{VisualStudioVersion} STREQUAL "14.0")
-                set(MSVC_TOOLSET_VERNAME "2015")
-                set(MSVC_TOOLSET_VERSION_INIT "140")
-            elseif($ENV{VisualStudioVersion} STREQUAL "12.0")
-                set(MSVC_TOOLSET_VERNAME "2013")
-                set(MSVC_TOOLSET_VERSION_INIT "120")
-            else()
-                set(MSVC_TOOLSET_VERNAME "2019")
-                set(MSVC_TOOLSET_VERSION_INIT "142")
-            endif()
-
-            if (NOT DEFINED MSVC_TOOLSET_VERSION)
-                set(MSVC_TOOLSET_VERSION ${MSVC_TOOLSET_VERSION_INIT})
-            endif()
-
-        endif()
-
-
-        if (NOT DEFINED ENV{VCToolsVersion})
-      
-            string(SUBSTRING ${MSVC_TOOLSET_VERSION} 0 2 MSVC_TOOLSET_VERMAJOR)
-            string(SUBSTRING ${MSVC_TOOLSET_VERSION} 2 1 MSVC_TOOLSET_VERMINOR)
-
-            #  string(REGEX MATCH "^${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR}([0-9])*(\\.[0-9]+)*" ztmp_re ${ztmp_sdkver})            
-            SUBDIRMATCH(MSVC_VCTOOLS_VERSION "^(${MSVC_TOOLSET_VERMAJOR}\\.${MSVC_TOOLSET_VERMINOR})([0-9])*(\\.[0-9]+)*" "${MSVC_VS_INSTALLDIR}/VC/Tools/MSVC")
-            SUBDIRLIST(ztmp_dirlist "${MSVC_VS_INSTALLDIR}/VC/Tools/MSVC")
-
-            #set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION ${MSVC_WINDOWS_KITS_VERSION})
-            #set(ENV{WindowsSDKVersion} ${MSVC_WINDOWS_KITS_VERSION})
-
-            set(MSVC_VCTOOLS_INSTALLDIR "${MSVC_VS_INSTALLDIR}/VC/Tools/MSVC/$ENV{MSVC_VCTOOLS_VERSION}")   
-        else()
-            set(MSVC_VCTOOLS_VERSION $ENV{VCToolsVersion})
-            set(MSVC_VCTOOLS_INSTALLDIR "${MSVC_VS_INSTALLDIR}/VC/Tools/MSVC/$ENV{VCToolsVersion}")   
-        endif()
-
-
-        message(STATUS "${MSVC_TOOLSET_VERMAJOR}.${MSVC_TOOLSET_VERMINOR}"  "match :: " "${MSVC_VCTOOLS_VERSION} in  ${MSVC_VS_INSTALLDIR}")
-
-    else()
-        #
-        cmake_path(SET MSVC_VCTOOLS_INSTALLDIR NORMALIZE $ENV{VCToolsInstallDir})
-       
-        string(FIND ${MSVC_VCTOOLS_INSTALLDIR} "/VC/Tools/MSVC/" ztmp_findpos)
-        if(NOT ztmp_findpos EQUAL -1)
-            string(SUBSTRING ${MSVC_VCTOOLS_INSTALLDIR} 0 ztmp_findpos MSVC_VS_INSTALLDIR)
-            string(SUBSTRING ${MSVC_VCTOOLS_INSTALLDIR} ztmp_findpos+15 -1 MSVC_VCTOOLS_VERSION)
-        endif()
-
-
-        string(REGEX MATCH "([0-9]+)(\\.[0-9]+)+" ztmp_re ${MSVC_VCTOOLS_VERSION})
-        set(MSVC_VCTOOLS_VERSION ${ztmp_re})
-
-        string(REGEX MATCH "([0-9]+)\\.([0-9])" ztmp_re ${MSVC_VCTOOLS_VERSION})
-        set(MSVC_TOOLSET_VERMAJOR ${CMAKE_MATCH_1})
-        set(MSVC_TOOLSET_VERMINOR ${CMAKE_MATCH_2})
-        set(MSVC_TOOLSET_VERSION "${MSVC_TOOLSET_VERMAJOR}${MSVC_TOOLSET_VERMINOR}")
-
-        #string(REGEX MATCH "^[a-zA-Z]/"MSVC_VS_INSTALLDIR ${MSVC_VCTOOLS_INSTALLDIR})
-
-        message(STATUS "VSINSTALLDIR defined ${MSVC_TOOLSET_VERMAJOR}.${MSVC_TOOLSET_VERMINOR}"  "match :: " "${MSVC_VCTOOLS_VERSION} in  ${MSVC_VS_INSTALLDIR}")
-    endif()
-
-
-    set(MSVC_VCTOOLS_INCDIR "${MSVC_VCTOOLS_INSTALLDIR}/include")   
-    set(MSVC_VCTOOLS_LIBDIR "${MSVC_VCTOOLS_INSTALLDIR}/lib/x64")   
-
-endif()
-
-]]
 
 # check MSVC_VCTOOLS_VERSION to determine msvc compiler version
 string(REGEX MATCH "([0-9]+)\\.([0-9][0-9])" ztmp_re ${MSVC_VCTOOLS_VERSION})
@@ -489,25 +300,50 @@ elseif(${MSVC_TOOLSET_VERMAJOR} STREQUAL "10")
 else()
 endif()
 
+# v140 v141 v142 v143 ...
+set(VCPKG_PLATFORM_TOOLSET "v${MSVC_TOOLSET_VERSION}")
+
 # VCPKG_LOAD_VCVARS_ENV false
 # VCPKG_VISUAL_STUDIO_PATH
 # VCPKG_PLATFORM_TOOLSET
 
 if (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "^AMD64|^amd64|^x64|^X64|^x86_x64|^X86_X64")
     if(${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x64|^X64")
-        set(MSVC_TOOLSET_BIN "${CMAKE_VCToolsInstallDir}/bin")
-        set(MSVC_TOOLSET_BIN_HOSTX64_X64 "${CMAKE_VCToolsInstallDir}/bin/Hostx64/x64")
+        set(MSVC_TOOLSET_BIN "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx64/x64")
+        set(MSVC_TOOLSET_BIN_HOSTX64_X64 "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx64/x64")
+
+        set(MSVC_MASM_COMPILER "{MSVC_WINDOWS_KITS_BINDIR}/x64/ml64.exe")
+
+    elseif (${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x86|^X86")
+        set(MSVC_TOOLSET_BIN "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx64/x86")
+        set(MSVC_TOOLSET_BIN_HOSTX64_X86 "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx64/x86")
+
+        set(MSVC_MASM_COMPILER "{MSVC_WINDOWS_KITS_BINDIR}/x86/ml.exe")
+
     endif()
-else()
+
+else (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "^x86|^X86|^x86_x64|^X86_X64")
+    if(${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x64|^X64")
+        set(MSVC_TOOLSET_BIN "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx86/x64")
+        set(MSVC_TOOLSET_BIN_HOSTX86_X64 "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx86/x64")
+
+        set(MSVC_MASM_COMPILER "{MSVC_WINDOWS_KITS_BINDIR}/x64/ml64.exe")
+
+    elseif (${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x86|^X86")
+        set(MSVC_TOOLSET_BIN "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx86/x86")
+        set(MSVC_TOOLSET_BIN_HOSTX86_X86 "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx86/x86")
+
+        set(MSVC_MASM_COMPILER "{MSVC_WINDOWS_KITS_BINDIR}/x86/ml.exe")
+
+    endif()
 
 endif()
-
 
 # VCToolsVersion
 find_program(MSVC_CXX_COMPILER
         NAMES "cl.exe"
         NAMES_PER_DIR
-        PATHS ${MSVC_VS_INSTALLDIR}
+        PATHS ${MSVC_TOOLSET_BIN}
         PATH_SUFFIXES "x64"
         DOC "MSVC CXX compiler"
         NO_PACKAGE_ROOT_PATH
@@ -516,6 +352,9 @@ find_program(MSVC_CXX_COMPILER
         NO_CMAKE_SYSTEM_PATH
         )
 
+if (DEFINED VCPKG_TRACE_TOOLCHAIN)
+    message(STATUS "msvc cl.exe is : ${MSVC_CXX_COMPILER}")
+endif()
 
 # get sub directories
 # SUBDIRLIST(LISTOFDIR ${MSVC_WINDOWS_KITS_DIR})
