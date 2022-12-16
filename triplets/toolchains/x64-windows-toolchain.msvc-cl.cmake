@@ -163,6 +163,7 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
 
     #
     # for ninja, we have to manually add the include path
+    # msbuild seems automatically set the default include path
     set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES "${CMAKE_VCIncludeDir};${MSVC_WINDOWS_KITS_INCDIR}/ucrt" CACHE STRING "" FORCE)
 
 endif()
