@@ -1,16 +1,28 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO HappySeaFox/sail
-    REF v0.9.0-pre20
-    SHA512 e11e05a452b62d6ad3d4c464994f410aa4829660003299b2d75910f0e089bde52bac73cf46b1be00524b157e059607867765f90615a6f5090c6106f12589dbb8
+    REF v0.9.0-rc2
+    SHA512 9cbf48b716ff13ff5d494166b6777c70f225c67842c00004706e00a8b411e5c59315c524865694c4698d661f7b675961df14ef0405b4a90d627107499587b544
     HEAD_REF master
 )
+
+# Enable selected codecs
+set(ONLY_CODECS "")
+
+foreach(CODEC avif bmp gif ico jpeg jpeg2000 pcx png qoi svg tga tiff wal webp xbm)
+    if (${CODEC} IN_LIST FEATURES)
+        list(APPEND ONLY_CODECS ${CODEC})
+    endif()
+endforeach()
+
+list(JOIN ONLY_CODECS "\;" ONLY_CODECS_ESCAPED)
 
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
 
     OPTIONS
         -DSAIL_COMBINE_CODECS=ON
+        -DSAIL_ONLY_CODECS=${ONLY_CODECS_ESCAPED}
         -DSAIL_BUILD_APPS=OFF
         -DSAIL_BUILD_EXAMPLES=OFF
         -DSAIL_BUILD_TESTS=OFF
@@ -21,8 +33,8 @@ vcpkg_cmake_install()
 vcpkg_copy_pdbs()
 
 # Remove duplicate files
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include
-                    ${CURRENT_PACKAGES_DIR}/debug/share)
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include"
+                    "${CURRENT_PACKAGES_DIR}/debug/share")
 
 # Move cmake configs
 vcpkg_cmake_config_fixup(PACKAGE_NAME sail       CONFIG_PATH lib/cmake/sail       DO_NOT_DELETE_PARENT_CONFIG_PATH)

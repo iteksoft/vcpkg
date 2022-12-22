@@ -1,24 +1,21 @@
+vcpkg_minimum_required(VERSION 2022-10-12) # for ${VERSION}
+
 vcpkg_from_github(OUT_SOURCE_PATH SOURCE_PATH
     REPO DragonJoker/ShaderWriter
-    REF bcebc67feb99d98066dfb51a3857155ddcfa9d57
-    HEAD_REF master
-    SHA512 675a9db22c3593426c9a364a8a2934e41f65447d450347dd5683a89e4f38dfbc914dca7f6fbfa77b0afd1fb0fd12c2316c11eded1453ae4498b448ae2267fdac
+    REF v${VERSION}
+    HEAD_REF development
+    SHA512 d87f5e2641b064b6d6c53c2af86ed3c133f76a408728f4ad4fbc122d4392b4da21fea3faa0b2f58391e348f23c972f3c0196386c5c8c66800500da99d4522f70
 )
 
 vcpkg_from_github(OUT_SOURCE_PATH CMAKE_SOURCE_PATH
     REPO DragonJoker/CMakeUtils
-    REF 27747f5c91acf76107220986f114efdab0a09a68
+    REF 3bea3c21f76f49cd3730e555b32e9d401b542526
     HEAD_REF master
-    SHA512 acd5dafc74e197886a9b1ac52b59bdbf2d136cc8b49683eda48b8ccc45eced5f68aa334c8f9c01c7d8bf5c8908b64cbf19a97c6e3666370111bb3d2551c3b469
+    SHA512 28c13672abe7a29e4c11192f3bbc10fd09d30f0719911370d7a1d70a534d41679feffafaad4ac1c1dd32403541ecf44b5021a1b8052418190dc040ed833ff15b
 )
 
-get_filename_component(SRC_PATH ${CMAKE_SOURCE_PATH} DIRECTORY)
-if (EXISTS ${SRC_PATH}/CMake)
-    file(REMOVE_RECURSE ${SRC_PATH}/CMake)
-endif()
-file(RENAME ${CMAKE_SOURCE_PATH} ${SRC_PATH}/CMake)
-set(CMAKE_SOURCE_PATH ${SRC_PATH}/CMake)
-file(COPY ${CMAKE_SOURCE_PATH} DESTINATION ${SOURCE_PATH})
+file(REMOVE_RECURSE "${SOURCE_PATH}/CMake")
+file(COPY "${CMAKE_SOURCE_PATH}/" DESTINATION "${SOURCE_PATH}/CMake")
 
 string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "static" BUILD_STATIC)
 
@@ -31,9 +28,11 @@ vcpkg_cmake_configure(
         -DSDW_BUILD_TESTS=OFF
         -DSDW_BUILD_STATIC_SDW=${BUILD_STATIC}
         -DSDW_BUILD_STATIC_SDAST=${BUILD_STATIC}
+        -DSDW_UNITY_BUILD=ON
 )
 
+vcpkg_copy_pdbs()
 vcpkg_cmake_install()
-vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/shaderwriter)
+vcpkg_cmake_config_fixup(PACKAGE_NAME ShaderWriter CONFIG_PATH lib/cmake/shaderwriter)
 
 file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
