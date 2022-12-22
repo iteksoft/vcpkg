@@ -62,7 +62,9 @@ if(NOT PORT MATCHES "(boost|hwloc|libpq|icu|harfbuzz|qt*|benchmark|gtest)")
 elseif(PORT MATCHES "(benchmark|gtest|qt*)")
 
     # Cannot have LTO enabled in gtest or benchmark since this eliminates/remove main from (gtest|benchmark)_main
+
     set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clang-cl.cmake")
+
     if(DEFINED VCPKG_PLATFORM_TOOLSET)
         set(VCPKG_PLATFORM_TOOLSET ClangCL)
     endif()
