@@ -89,7 +89,7 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
       set(VCPKG_CRT_FLAG "/MT")
       set(VCPKG_DBG_FLAG "/Zi")
     else()
-      message(FATAL_ERROR "Invalid VCPKG_CRT_LINKAGE: \"${VCPKG_CRT_LINKAGE}\".")
+      #message(FATAL_ERROR "Invalid VCPKG_CRT_LINKAGE: \"${VCPKG_CRT_LINKAGE}\".")
     endif()
 
     # Set charset flag.
@@ -134,9 +134,9 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
     set(CMAKE_RC_FLAGS_DEBUG_INIT "-D_DEBUG")
 
     # Add windows defines.
-    add_compile_definitions(_WIN64 _WIN32_WINNT=0x0A00 WINVER=0x0A00)
-    add_compile_definitions(_CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
-    add_compile_definitions(_ATL_SECURE_NO_DEPRECATE _SCL_SECURE_NO_WARNINGS)
+    # add_compile_definitions(_WIN64 _WIN32_WINNT=0x0A00 WINVER=0x0A00)
+    # add_compile_definitions(_CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
+    # add_compile_definitions(_ATL_SECURE_NO_DEPRECATE _SCL_SECURE_NO_WARNINGS)
 
     if(${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x64|^X64")
         set(CMAKE_VCIncludeDir "${CMAKE_VCToolsInstallDir}/include")   
