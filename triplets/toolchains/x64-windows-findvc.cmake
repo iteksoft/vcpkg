@@ -133,6 +133,10 @@ if (NOT DEFINED ENV{VSINSTALLDIR})
             endif()
 
             set(MSVC_TOOLSET_VERSION ${MSVC_TOOLSET_VERSION_INIT})
+
+            if (DEFINED VCPKG_TOOLCHAIN_UPDATE_ENVVAR)
+                set(ENV{VisualStudioVersion} "16.0")
+            endif()
             # message(STATUS "VS version: $ENV{VisualStudioVersion}" )
         else()
             if ($ENV{VisualStudioVersion} STREQUAL "16.0")
@@ -161,7 +165,11 @@ if (NOT DEFINED ENV{VSINSTALLDIR})
 
         endif()
 
-        set(CMAKE_VSINSTALLDIR "${programfilesx86}/Microsoft Visual Studio/${CMAKE_VSVERNAME}/Professional")   
+        set(CMAKE_VSINSTALLDIR "${programfilesx86}/Microsoft Visual Studio/${CMAKE_VSVERNAME}/Professional")
+        # set the ENV variable
+        if (DEFINED VCPKG_TOOLCHAIN_UPDATE_ENVVAR)
+            set(ENV{VSINSTALLDIR} "${programfilesx86}/Microsoft Visual Studio/${CMAKE_VSVERNAME}/Professional")
+        endif()
 
         if (NOT DEFINED ENV{VCToolsVersion})
       
@@ -175,10 +183,22 @@ if (NOT DEFINED ENV{VSINSTALLDIR})
             #set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION ${CMAKE_WINDOWS_KITS_VERSION})
             #set(ENV{WindowsSDKVersion} ${CMAKE_WINDOWS_KITS_VERSION})
 
-            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/${CMAKE_VCToolsVersion}")   
+            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/${CMAKE_VCToolsVersion}")
+
+            if (DEFINED VCPKG_TOOLCHAIN_UPDATE_ENVVAR)
+                set(ENV{VCToolsVersion} "${CMAKE_VCToolsVersion}")
+                set(ENV{VCINSTALLDIR} "${CMAKE_VSINSTALLDIR}/VC")
+                set(ENV{VCToolsInstallDir} "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/${CMAKE_VCToolsVersion}")
+            endif()
+
         else()
             set(CMAKE_VCToolsVersion $ENV{VCToolsVersion})
-            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/$ENV{VCToolsVersion}")   
+            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/$ENV{VCToolsVersion}")
+
+            if (DEFINED VCPKG_TOOLCHAIN_UPDATE_ENVVAR)
+                set(ENV{VCINSTALLDIR} "${CMAKE_VSINSTALLDIR}/VC")
+                set(ENV{VCToolsInstallDir} "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/${CMAKE_VCToolsVersion}")
+            endif()
         endif()
 
 
@@ -203,6 +223,13 @@ if (NOT DEFINED ENV{VSINSTALLDIR})
         if(NOT __findpos EQUAL -1)
             string(SUBSTRING ${CMAKE_VCToolsInstallDir} 0 __findpos CMAKE_VSINSTALLDIR)
             string(SUBSTRING ${CMAKE_VCToolsInstallDir} __findpos+15 -1 CMAKE_VCToolsVersion)
+
+            if (DEFINED VCPKG_TOOLCHAIN_UPDATE_ENVVAR)
+                set(ENV{VCToolsVersion} "${CMAKE_VCToolsVersion}")
+                set(ENV{VCINSTALLDIR} "${CMAKE_VSINSTALLDIR}/VC")
+                set(ENV{VSINSTALLDIR} "${CMAKE_VSINSTALLDIR}")
+                # set(ENV{VCToolsInstallDir} "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/${CMAKE_VCToolsVersion}")
+            endif()
         endif()
 
 
@@ -219,7 +246,7 @@ if (NOT DEFINED ENV{VSINSTALLDIR})
         message(STATUS "${MSVC_TOOLSET_VERMAJOR}.${MSVC_TOOLSET_VERMINOR}"  "match :: " "${CMAKE_VCToolsVersion} in  ${CMAKE_VSINSTALLDIR}")
     endif()
 
-
+    #set(ENV{WindowsSDKVersion} ${CMAKE_WINDOWS_KITS_VERSION})
 else()
     cmake_path(SET CMAKE_VSINSTALLDIR NORMALIZE $ENV{VSINSTALLDIR})
 
@@ -287,12 +314,21 @@ else()
             #set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION ${CMAKE_WINDOWS_KITS_VERSION})
             #set(ENV{WindowsSDKVersion} ${CMAKE_WINDOWS_KITS_VERSION})
 
-            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/$ENV{CMAKE_VCToolsVersion}")   
+            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/$ENV{CMAKE_VCToolsVersion}")
+
+            if (DEFINED VCPKG_TOOLCHAIN_UPDATE_ENVVAR)
+                set(ENV{VCToolsVersion} "${CMAKE_VCToolsVersion}")
+                set(ENV{VCToolsInstallDir} "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/${CMAKE_VCToolsVersion}")
+            endif()
         else()
             set(CMAKE_VCToolsVersion $ENV{VCToolsVersion})
-            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/$ENV{VCToolsVersion}")   
-        endif()
+            set(CMAKE_VCToolsInstallDir "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/$ENV{VCToolsVersion}")
 
+            if (DEFINED VCPKG_TOOLCHAIN_UPDATE_ENVVAR)
+                #set(ENV{VCToolsVersion} "${CMAKE_VCToolsVersion}")
+                set(ENV{VCToolsInstallDir} "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/${CMAKE_VCToolsVersion}")
+            endif()
+        endif()
 
         message(STATUS "${MSVC_TOOLSET_VERMAJOR}.${MSVC_TOOLSET_VERMINOR}"  "match :: " "${CMAKE_VCToolsVersion} in  ${CMAKE_VSINSTALLDIR}")
 
@@ -316,10 +352,18 @@ else()
         set(MSVC_TOOLSET_VERSION "${MSVC_TOOLSET_VERMAJOR}${MSVC_TOOLSET_VERMINOR}")
 
         #string(REGEX MATCH "^[a-zA-Z]/"CMAKE_VSINSTALLDIR ${CMAKE_VCToolsInstallDir})
+        if (DEFINED VCPKG_TOOLCHAIN_UPDATE_ENVVAR)
+            set(ENV{VCToolsVersion} "${CMAKE_VCToolsVersion}")
+        endif()
 
         message(STATUS "VSINSTALLDIR defined ${MSVC_TOOLSET_VERMAJOR}.${MSVC_TOOLSET_VERMINOR}"  "match :: " "${CMAKE_VCToolsVersion} in  ${CMAKE_VSINSTALLDIR}")
     endif()
 
+    if (DEFINED VCPKG_TOOLCHAIN_UPDATE_ENVVAR)
+        set(ENV{VCINSTALLDIR} "${CMAKE_VSINSTALLDIR}/VC")
+        # set(ENV{VSINSTALLDIR} "${CMAKE_VSINSTALLDIR}")
+        # set(ENV{VCToolsInstallDir} "${CMAKE_VSINSTALLDIR}/VC/Tools/MSVC/${CMAKE_VCToolsVersion}")
+    endif()
 
     set(CMAKE_VCIncludeDir "${CMAKE_VCToolsInstallDir}/include")   
     set(CMAKE_VCLibDir "${CMAKE_VCToolsInstallDir}/lib/x64")   
@@ -347,6 +391,17 @@ elseif(${MSVC_TOOLSET_VERMAJOR} STREQUAL "10")
 else()
 endif()
 
+
+# find LLVM bundled in VC Tools
+set(CMAKE_VCIncludeDir "${CMAKE_VCToolsInstallDir}/include")
+
+if(NOT ${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
+    set(CMAKE_LLVM_ROOT "${CMAKE_VSINSTALLDIR}/VC/Tools/LLVM")
+    set(CMAKE_LLVM_DIRBIN "${CMAKE_VSINSTALLDIR}/VC/Tools/LLVM/x64/bin")
+else()
+    set(CMAKE_LLVM_ROOT "${CMAKE_VSINSTALLDIR}/VC/Tools/LLVM")
+    set(CMAKE_LLVM_DIRBIN "${CMAKE_VSINSTALLDIR}/VC/Tools/LLVM/bin")
+endif()
 # get sub directories
 # SUBDIRLIST(LISTOFDIR ${CMAKE_WINDOWS_KITS_DIR})
 # message(STATUS "cmake_winkits_dir:: " ${CMAKE_WINDOWS_KITS_DIR},, "list of win kits subdirs::" ${LISTOFDIR})
