@@ -2,7 +2,7 @@ include_guard(GLOBAL)
 #include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 #include("${CMAKE_CURRENT_LIST_DIR}/${VCPKG_TARGET_TRIPLET}.cmake")
 
-include("${CMAKE_CURRENT_LIST_DIR}/x64-windows-util.findvc.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/x64-windows-util.find-msvc.cmake")
 #[[
 # triplet or toolchain does not support these settings?
 # from testing no effects by CMake toolchain
@@ -20,34 +20,25 @@ set(CMAKE_CXX_EXTENSIONS OFF CACHE STRING "")
 
 ]]#
 if(NOT DEFINED ENV{LLVM_ROOT})
-
-    if(NOT ${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
-        set(CMAKE_LLVM_ROOT "${CMAKE_VSINSTALLDIR}/VC/Tools/LLVM")
-        set(CMAKE_LLVM_DIRBIN "${CMAKE_VSINSTALLDIR}/VC/Tools/LLVM/x64/bin")
-    else()
-        set(CMAKE_LLVM_ROOT "${CMAKE_VSINSTALLDIR}/VC/Tools/LLVM")
-        set(CMAKE_LLVM_DIRBIN "${CMAKE_VSINSTALLDIR}/VC/Tools/LLVM/bin")
-    endif()
+    # use MSVC LLVM toolchain
+    set(ENV{LLVM_ROOT} "${MSVC_LLVM_ROOT}")
+    set(LLVM_ROOT "${MSVC_LLVM_ROOT}")
+    set(LLVM_DIRBIN "${MSVC_LLVM_DIRBIN}")
 
 else()
-    set(CMAKE_LLVM_ROOT "${LLVM_ROOT}")
-    set(CMAKE_LLVM_DIRBIN "$ENV{LLVM_ROOT}/bin")
+    set(LLVM_ROOT "$ENV{LLVM_ROOT}")
+    set(LLVM_DIRBIN "$ENV{LLVM_ROOT}/bin")
 endif()
 
 # Set compiler.
-find_program(CLANGCL_EXECUTABLE NAMES "clang-cl.exe" PATHS ${CMAKE_LLVM_DIRBIN} PATH_SUFFIXES "bin" NO_DEFAULT_PATH)
-#find_program(CLANG-CL_EXECUTBALE NAMES "clang-cl.exe" PATHS ENV LLVM_ROOT PATH_SUFFIXES "bin" )
-
-if (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "^AMD64|^amd64|^x64|^X64|^x86_x64|^X86_X64")
-    if(${VCPKG_TARGET_ARCHITECTURE} MATCHES "^x64|^X64")
-        set(MSVC_TOOLSET_BIN "${MSVC_VCTOOLS_INSTALLDIR}/bin")
-        set(MSVC_TOOLSET_BIN_HOSTX64_X64 "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx64/x64")
-    endif()
-else()
-
-endif()
+find_program(CLANGCL_EXECUTABLE NAMES "clang-cl.exe" PATHS ${LLVM_DIRBIN} ${LLVM_ROOT} PATH_SUFFIXES "bin" NO_DEFAULT_PATH)
 
 
+# already done in util.find-msvc.cmake
+# set(MSVC_TOOLSET_BIN "${MSVC_VCTOOLS_INSTALLDIR}/bin")
+# set(MSVC_TOOLSET_BIN_HOSTX64_X64 "${MSVC_VCTOOLS_INSTALLDIR}/bin/Hostx64/x64")
+
+# use mt.exe from MSVC
 find_program(CLANGCL_MTEXE
         NAMES "mt.exe"
         NAMES_PER_DIR
