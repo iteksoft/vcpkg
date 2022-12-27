@@ -30,6 +30,7 @@ else()
     set(LLVM_DIRBIN "$ENV{LLVM_ROOT}/bin")
 endif()
 
+message(STATUS "LLVM_ROOT is ${LLVM_DIRBIN} ${LLVM_ROOT} ${MSVC_VS_INSTALLDIR} ") # Not a FATAL_ERROR due to being a toolchain!
 # Set compiler.
 find_program(CLANGCL_EXECUTABLE NAMES "clang-cl.exe" PATHS ${LLVM_DIRBIN} ${LLVM_ROOT} PATH_SUFFIXES "bin" NO_DEFAULT_PATH)
 

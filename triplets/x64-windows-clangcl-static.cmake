@@ -10,7 +10,8 @@ if (DEFINED VCPKG_TRACE_TOOLCHAIN)
     message(STATUS "-->ENTER VCPKG Toolchain triplet ${CMAKE_CURRENT_SOURCE_DIR};; cmakefile: ${CMAKE_CURRENT_LIST_FILE} ")
 endif()
 
-
+# set
+set(VCPKG_TRIPLET_CUSTOMTOOLCHAIN "x64-windows-toolchain.llvm-clangcl.cmake")
 
 # use LLVM_ROOT instead
 set(VCPKG_TARGET_ARCHITECTURE x64)
@@ -18,6 +19,8 @@ set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_CRT_LINKAGE static)
 set(VCPKG_ENV_PASSTHROUGH "LLVM_ROOT;LLVM_VERSION")
 set(VCPKG_QT_TARGET_MKSPEC win32-clang-msvc) # For Qt5
+
+
 
 message(STATUS " 000port is  ${PORT}")
 
@@ -45,10 +48,10 @@ if(NOT PORT MATCHES "(boost|hwloc|libpq|icu|harfbuzz|qt*|benchmark|gtest)")
         # if defined, it shall be called from CMake cmdline with
         #  VCPKG_CHAINLOAD_TOOLCHAIN_FILE="G:\vcpkg/triplets/x64-windows-clangcl-static.cmake"
         #  VCPKG_TARGET_TRIPLET="x64-windows-clangcl-static"
-        set(Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clang-cl.cmake")
+        set(Z_VCPKG_LOAD_TOOLCHAIN_FILE_FROM_TRIPLET "${CMAKE_CURRENT_LIST_DIR}/toolchains/${VCPKG_TRIPLET_CUSTOMTOOLCHAIN}")
     else()
         # not defined, worked as a triplet in vcpkg port mode, set the vcpkg toolchain file, which will be included in vcpkg.cmake
-        set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clang-cl.cmake")
+        set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/${VCPKG_TRIPLET_CUSTOMTOOLCHAIN}")
     endif()
 
     if(DEFINED VCPKG_PLATFORM_TOOLSET)
@@ -63,7 +66,7 @@ elseif(PORT MATCHES "(benchmark|gtest|qt*)")
 
     # Cannot have LTO enabled in gtest or benchmark since this eliminates/remove main from (gtest|benchmark)_main
 
-    set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/x64-windows-toolchain.clang-cl.cmake")
+    set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/toolchains/${VCPKG_TRIPLET_CUSTOMTOOLCHAIN}")
 
     if(DEFINED VCPKG_PLATFORM_TOOLSET)
         set(VCPKG_PLATFORM_TOOLSET ClangCL)

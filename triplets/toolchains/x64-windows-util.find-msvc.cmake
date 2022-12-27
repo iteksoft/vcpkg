@@ -200,8 +200,11 @@ if (NOT DEFINED ENV{VCToolsInstallDir})
         set(MSVC_TOOLSET_VERSION ${MSVC_TOOLSET_VERSION_INIT})
     endif()
 
+    message(STATUS "MSVC_VS_INSTALLDIR preee:: ${programfilesx86}/Microsoft Visual Studio/${MSVC_TOOLSET_VERNAME}/Professional")
+
     if (NOT DEFINED ENV{VSINSTALLDIR})
         set(MSVC_VS_INSTALLDIR "${programfilesx86}/Microsoft Visual Studio/${MSVC_TOOLSET_VERNAME}/Professional")
+        message(STATUS "MSVC_VS_INSTALLDIR:: ${programfilesx86}/Microsoft Visual Studio/${MSVC_TOOLSET_VERNAME}/Professional")
         if (${VCPKG_TOOLCHAIN_UPDATE_ENVVAR})
             set(ENV{VSINSTALLDIR} "${programfilesx86}/Microsoft Visual Studio/${MSVC_TOOLSET_VERNAME}/Professional")
         endif()
@@ -248,15 +251,17 @@ if (NOT DEFINED ENV{VCToolsInstallDir})
     endif()
     
 else()
-
     #
     cmake_path(SET MSVC_VCTOOLS_INSTALLDIR NORMALIZE $ENV{VCToolsInstallDir})
 
     string(FIND ${MSVC_VCTOOLS_INSTALLDIR} "/VC/Tools/MSVC/" ztmp_findpos)
     if(NOT ztmp_findpos EQUAL -1)
-        string(SUBSTRING ${MSVC_VCTOOLS_INSTALLDIR} 0 ztmp_findpos MSVC_VS_INSTALLDIR)
-        string(SUBSTRING ${MSVC_VCTOOLS_INSTALLDIR} ztmp_findpos+15 -1 MSVC_VCTOOLS_VERSION)
+        string(SUBSTRING ${MSVC_VCTOOLS_INSTALLDIR} 0 ${ztmp_findpos} MSVC_VS_INSTALLDIR)
+        math(EXPR ztmp_vcver_pos "${ztmp_findpos}+15")
+        string(SUBSTRING ${MSVC_VCTOOLS_INSTALLDIR} ${ztmp_vcver_pos} -1 MSVC_VCTOOLS_VERSION)
     endif()
+
+    message(STATUS "msvc var:: ${MSVC_VS_INSTALLDIR}  [[${ztmp_findpos}]] ([${MSVC_VCTOOLS_VERSION}]) ")
     
     string(REGEX MATCH "([0-9]+)(\\.[0-9]+)+" ztmp_re ${MSVC_VCTOOLS_VERSION})
     set(MSVC_VCTOOLS_VERSION ${ztmp_re})
@@ -389,9 +394,9 @@ endif()
 # message(STATUS "cmake_winkits_dir:: " ${MSVC_WINDOWSKITS_DIR},, "list of win kits subdirs::" ${LISTOFDIR})
 
 if (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "^AMD64|^amd64|^x64|^X64|^x86_x64|^X86_X64")
-    set(MSVC_LLVM_ROOT "${MSVC_VSINSTALLDIR}/VC/Tools/LLVM")
-    set(MSVC_LLVM_DIRBIN "${MSVC_VSINSTALLDIR}/VC/Tools/LLVM/x64/bin")
+    set(MSVC_LLVM_ROOT "${MSVC_VS_INSTALLDIR}/VC/Tools/LLVM")
+    set(MSVC_LLVM_DIRBIN "${MSVC_VS_INSTALLDIR}/VC/Tools/LLVM/x64/bin")
 else()
-    set(MSVC_LLVM_ROOT "${MSVC_VSINSTALLDIR}/VC/Tools/LLVM")
-    set(MSVC_LLVM_DIRBIN "${MSVC_VSINSTALLDIR}/VC/Tools/LLVM/bin")
+    set(MSVC_LLVM_ROOT "${MSVC_VS_INSTALLDIR}/VC/Tools/LLVM")
+    set(MSVC_LLVM_DIRBIN "${MSVC_VS_INSTALLDIR}/VC/Tools/LLVM/bin")
 endif()
