@@ -261,7 +261,6 @@ else()
         string(SUBSTRING ${MSVC_VCTOOLS_INSTALLDIR} ${ztmp_vcver_pos} -1 MSVC_VCTOOLS_VERSION)
     endif()
 
-    message(STATUS "msvc var:: ${MSVC_VS_INSTALLDIR}  [[${ztmp_findpos}]] ([${MSVC_VCTOOLS_VERSION}]) ")
     
     string(REGEX MATCH "([0-9]+)(\\.[0-9]+)+" ztmp_re ${MSVC_VCTOOLS_VERSION})
     set(MSVC_VCTOOLS_VERSION ${ztmp_re})
@@ -269,6 +268,7 @@ else()
     string(REGEX MATCH "([0-9]+)\\.([0-9])" ztmp_re ${MSVC_VCTOOLS_VERSION})
     set(MSVC_TOOLSET_VERMAJOR ${CMAKE_MATCH_1})
     set(MSVC_TOOLSET_VERMINOR ${CMAKE_MATCH_2})
+    # remake the MSVC_TOOLSET_VERSION to avoid any trailing slash/
     set(MSVC_TOOLSET_VERSION "${MSVC_TOOLSET_VERMAJOR}${MSVC_TOOLSET_VERMINOR}")
 
     #string(REGEX MATCH "^[a-zA-Z]/"MSVC_VS_INSTALLDIR ${MSVC_VCTOOLS_INSTALLDIR})
@@ -306,6 +306,7 @@ else()
         set(ENV{VSINSTALLDIR} "${MSVC_VS_INSTALLDIR}")
     endif()
 
+    #message(STATUS "msvc var:: ${MSVC_VS_INSTALLDIR}  vername::[[${MSVC_TOOLSET_VERNAME}]] msvc::([${MSVC_VCTOOLS_VERSION}]) ")
     if (DEFINED VCPKG_TRACE_TOOLCHAIN)
         message(STATUS "${MSVC_TOOLSET_VERMAJOR}.${MSVC_TOOLSET_VERMINOR}"  "match :: " "${MSVC_VCTOOLS_VERSION} in  ${MSVC_VS_INSTALLDIR}")
     endif()
